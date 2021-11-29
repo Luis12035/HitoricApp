@@ -20,18 +20,21 @@ class Historic{
     }
 
     //Peticion asincrona para obtener todos los datos de la coleccion
-    async getAll(){
-        let historics = await this.historicColl.find({});
+    async getAll(id){
+        const filter = {"user_id": new ObjectID(id)}
+        console.log(filter)
+        let historics = await this.historicColl.find(filter);
         return historics.toArray();
     }
 
     //peticion asincrona para agregar un nuevo documento
-    async addNew(nombre, historyMetaobjet){
+    async addNew(nombre, historyMetaobjet,id){
         var historial = [];
         historial.push(historyMetaobjet)
         let newHistory = {
             nombre: nombre,
-            historial
+            historial,
+            user_id: new ObjectID(id)
         }
         let result = await this.historicColl.insertOne(newHistory);
         return result;
@@ -39,8 +42,6 @@ class Historic{
 
     async addMetaTohistori(historicMetaKey, id){
         let filter = {"_id": new ObjectID(id)};
-        console.log(id, " ", historicMetaKey)
-        
         let updateJson = {
            "$push" : {"historial": historicMetaKey}
         };
@@ -48,11 +49,30 @@ class Historic{
         return result;
     }
 
-    async getByName(nombre){
-        const filter = {"_id": new ObjectID(nombre)};
+    async getById(id){
+        const filter = {"_id": new ObjectID(id)};
         let historicDocument = await this.historicColl.findOne(filter);
         return historicDocument;
     }
+
+    async deleteById(id) {
+        // elimina los datos agregados por id de usuario
+        let filter = { "_id": new ObjectID(id) };
+        let result = await this.historicColl.deleteOne(filter);
+        return result;
+      }
+
+      async deleteHistoric(id, objectId) {
+        // elimina un elemento de historial
+        let filter = { "_id": new ObjectID(id) };
+        let updateJson = {
+            "$pop" : {"historial": -objectId}
+         };
+        let result = await this.historicColl.updateOne(filter, updateJson);
+        return result;
+      }
+
+
 }
 
 module.exports = Historic;

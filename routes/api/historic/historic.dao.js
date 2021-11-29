@@ -37,8 +37,10 @@ class Historic{
         return result;
     }
 
-    async addMetaTohistori(historicMetaKey, nombre){
-        const filter = {"nombre": nombre};
+    async addMetaTohistori(historicMetaKey, id){
+        let filter = {"_id": new ObjectID(id)};
+        console.log(id, " ", historicMetaKey)
+        
         let updateJson = {
            "$push" : {"historial": historicMetaKey}
         };

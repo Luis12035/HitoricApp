@@ -54,11 +54,26 @@ router.get('/getbyname/:name',async (req, res, next)=>{
     }
 })
 
-router.put('/update/:name', async(req, res, next)=>{
+router.put('/update/:id', async(req, res, next)=>{
     try {
-        const{name} = req.params;
-        const {historicMetaKey} = req.body;
-        const result = await Historic.addMetaTohistori(historicMetaKey,name);
+        const{id} = req.params;
+        const{
+            Codigo,
+            Clase,
+            Año,
+            Periodo,
+            Nota
+        } = req.body;
+
+        var historicMetaKey = {
+            Codigo: Codigo,
+            Clase: Clase,
+            Año: Año,
+            Periodo: Periodo,
+            Nota: Nota
+        }
+    
+        const result = await Historic.addMetaTohistori(historicMetaKey, id);
         console.log(result);
         res.status(200).json({"msg":"Modificado OK"});
     } catch (ex) {
